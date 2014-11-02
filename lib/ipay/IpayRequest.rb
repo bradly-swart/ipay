@@ -10,7 +10,8 @@ class IpayRequest < ERB
   # end
 
   def initialize(template = nil, params = {})
-    @request_template_path = File.expand_path("lib/ipay/requests/")
+    @request_template_path = File.expand_path("requests/", File.dirname(__FILE__))
+    p "current directory: #{File.dirname(__FILE__)}"
     @params = params
     @template = self.send(template)
     super(@template)
