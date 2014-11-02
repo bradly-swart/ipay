@@ -35,6 +35,7 @@ describe Ipay do
       time = Time.new
       rand_id = rand(999999999999).to_s.center(10, rand(9).to_s).to_i
       vend_params = {term: "00001",
+                seq_num: 1,
                 time: time.localtime("+02:00"),
                 reference: rand_id,
                 amount: "1337",
@@ -56,6 +57,7 @@ describe Ipay do
         vend_params = {term: "00100",
                   time: time.localtime("+02:00"),
                   reference: rand_id,
+                  seq_num: 1,
                   amount: "1337",
                   currency: "ZAR",
                   num_tokens: "1",
@@ -71,13 +73,11 @@ describe Ipay do
 
 
       it "should send a vend reverse request" do
-        print "---------\n"
-        print vend_params
-        print "---------\n"
         time = Time.new
         rand_id = rand(999999999999).to_s.center(10, rand(9).to_s).to_i
         params = {term: '00001',
                   time: time,
+                  seq_num: 2,
                   orig_time: vend_params[:time],
                   rep_count: 0,
                   reference: rand_id,
@@ -97,6 +97,7 @@ describe Ipay do
         time = Time.new
         rand_id = rand(999999999999).to_s.center(10, rand(9).to_s).to_i
         vend_params = {term: "00200",
+                  seq_num: 1,
                   time: time.localtime("+02:00"),
                   reference: rand_id,
                   amount: "1337",
@@ -106,7 +107,7 @@ describe Ipay do
                   pay_type: "creditCard"}
 
       vend_request = IpayRequest.new(:vend_request, vend_params)
-      
+
       expect{subject.vend_request(vend_params)}.to raise_error(Net::TCPClient::ReadTimeout)
       end
     end
@@ -117,6 +118,7 @@ describe Ipay do
                   time: time.localtime("+02:00"),
                   reference: rand_id,
                   amount: "1337",
+                  seq_num: 1,
                   currency: "ZAR",
                   num_tokens: "1",
                   meter: "A12C3456789",

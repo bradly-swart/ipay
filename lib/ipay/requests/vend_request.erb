@@ -1,4 +1,4 @@
-<ipayMsg client='<%= @params[:client_id] %>' term='<%= @params[:term] %>' seqNum='0' time='<%= @params[:time] %>'>
+<ipayMsg client='<%= @params[:client_id] %>' term='<%= @params[:term] %>' seqNum='<%= @params[:seq_num] %>' time='<%= @params[:time] %>'>
   <elecMsg ver='2.37'>
     <vendReq>
       <ref><%= @params[:reference] %></ref>
