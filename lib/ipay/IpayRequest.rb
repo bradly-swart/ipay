@@ -2,7 +2,7 @@ require 'erb'
 require 'pathname'
 
 class IpayRequest < ERB
-  @@request_template_path = "./lib/ipay/requests/"
+  @@request_template_path = Pathname.new "./lib/ipay/requests/"
   # @@request_template_path = "./ipay/requests/"
   # def method_missing(method, *args, &block)
   #   p "no template #{method} found"
