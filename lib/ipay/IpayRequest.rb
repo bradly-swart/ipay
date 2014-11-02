@@ -11,14 +11,12 @@ class IpayRequest < ERB
 
   def initialize(template = nil, params = {})
     @request_template_path = File.expand_path("requests/", File.dirname(__FILE__))
-    p "current directory: #{File.dirname(__FILE__)}"
     @params = params
     @template = self.send(template)
     super(@template)
   end
 
   def vend_request
-    p  "**reading: #{@request_template_path}/vend_request.erb"
     template_file = File.read("#{@request_template_path}/vend_request.erb")
     template_file.gsub!("\n", '')
 
