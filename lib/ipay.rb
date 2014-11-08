@@ -52,7 +52,7 @@ class Ipay
       #rollback and return.
       raise
     end
-    return vr, response
+    return vr.result, response
   end
 
   def vend_reverse_request(params)
