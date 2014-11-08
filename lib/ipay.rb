@@ -57,18 +57,6 @@ class Ipay
 
   def vend_reverse_request(params)
     response = nil
-    # params = {term: term,
-    #           time: time,
-    #           orig_time: orig_time,
-    #           rep_count: rep_count,
-    #           reference: reference,
-    #           orig_reference: orig_reference,
-    #           amount: amount,
-    #           currency: currency,
-    #           num_tokens: num_tokens,
-    #           meter: meter,
-    #           pay_type: pay_type}
-
     begin
       vr = IpayRequest.new(:vend_rev_request, params)
       raw_response = socket_send(calc_vli(vr.result), vr.result)
@@ -77,7 +65,7 @@ class Ipay
       p "request timed out."
       raise
     end
-    return response
+    return vr.result, response
   end
 
   def calc_vli(message)
