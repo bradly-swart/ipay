@@ -10,6 +10,7 @@ require 'pry'
 
 class Ipay
   attr_accessor :port,:host, :timeout, :stream_sock
+  attr_reader :vend_request_xml, :vend_reverse_request_xml
 
   def initialize
     @host = "41.204.194.188"
@@ -41,31 +42,52 @@ class Ipay
   end
 
   def vend_request(vend_params)
-    response = nil
     vr = nil
     begin
       vr = IpayRequest.new(:vend_request, vend_params)
-      raw_response = socket_send(calc_vli(vr.result), vr.result)
+      @vend_request_xml = vr.result
+    rescue => e
+      p "Error reading template: #{e.message}"
+      #rollback and return.
+    end
+    return @vend_request_xml
+  end
+
+  def vend_request_send
+    response = nil
+    begin
+      raw_response = socket_send(calc_vli(@vend_request_xml), @vend_request_xml)
       response = Nokogiri::XML(raw_response)
     rescue Net::TCPClient::ReadTimeout => ex
       p "request timed out."
       #rollback and return.
       raise
     end
-    return vr.result, response
+    return response
   end
 
   def vend_reverse_request(params)
-    response = nil
     begin
       vr = IpayRequest.new(:vend_rev_request, params)
-      raw_response = socket_send(calc_vli(vr.result), vr.result)
+      @vend_reverse_request_xml = vr.result
+    rescue => e
+      p "Error reading template: #{e.message}"
+    end
+    return @vend_reverse_request_xml
+  end
+
+  def vend_reverse_request_send
+    response = nil
+    begin
+      p "** #{@vend_reverse_request_xml}"
+      raw_response = socket_send(calc_vli(@vend_reverse_request_xml), @vend_reverse_request_xml)
       response = Nokogiri::XML(raw_response)
     rescue Net::TCPClient::ReadTimeout => ex
       p "request timed out."
+      #rollback and return.
       raise
     end
-    return vr.result, response
+    return response
   end
 
   def calc_vli(message)

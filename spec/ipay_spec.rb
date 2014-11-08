@@ -8,6 +8,7 @@ describe Ipay do
     time = Time.new
     rand_id = rand(999999999999).to_s.center(10, rand(9).to_s).to_i
     params = {term: "00001",
+              client: "StonehouseSA",
               time: time.localtime("+02:00"),
               reference: rand_id,
               amount: "1337",
@@ -35,17 +36,21 @@ describe Ipay do
       time = Time.new
       rand_id = rand(999999999999).to_s.center(10, rand(9).to_s).to_i
       vend_params = {term: "00001",
+                client: "StonehouseSA",
                 seq_num: 1,
                 time: time.localtime("+02:00"),
-                reference: rand_id,
+                ref: rand_id,
                 amount: "1337",
                 currency: "ZAR",
                 num_tokens: "1",
                 meter: "A12C3456789",
                 pay_type: "creditCard"}
-      let(:vend_response){subject.vend_request(vend_params)}
+      # let(:vend_request){}
+      # let(:vend_response){}
 
       it "should receive a response" do
+        vend_request = subject.vend_request(vend_params)
+        vend_response = subject.vend_request_send
         res_node = vend_response.xpath("//elecMsg/vendRes/res")
         expect(res_node.attribute('code').value).to eq("elec000")
       end
@@ -55,8 +60,9 @@ describe Ipay do
         time = Time.new
         rand_id = rand(999999999999).to_s.center(10, rand(9).to_s).to_i
         vend_params = {term: "00100",
+                  client: "StonehouseSA",
                   time: time.localtime("+02:00"),
-                  reference: rand_id,
+                  ref: rand_id,
                   seq_num: 1,
                   amount: "1337",
                   currency: "ZAR",
@@ -76,18 +82,21 @@ describe Ipay do
         time = Time.new
         rand_id = rand(999999999999).to_s.center(10, rand(9).to_s).to_i
         params = {term: '00001',
+                  client: "StonehouseSA",
                   time: time,
                   seq_num: 2,
                   orig_time: vend_params[:time],
                   rep_count: 0,
-                  reference: rand_id,
-                  orig_reference: vend_params[:reference],
+                  ref: rand_id,
+                  orig_ref: vend_params[:ref],
                   amount: vend_params[:amount],
                   currency: vend_params[:currency],
                   num_tokens: vend_params[:num_tokens],
                   meter: vend_params[:meter],
                   pay_type: vend_params[:pay_type]}
-        vend_rev_response = subject.vend_reverse_request(params)
+        vend_rev_xml = subject.vend_reverse_request(params)
+        vend_rev_response = subject.vend_reverse_request_send
+
 
         res_node = vend_rev_response.xpath("//ipayMsg/elecMsg/vendRevRes/res")
         expect(res_node.attribute('code').value).to eq("elec003")
@@ -98,25 +107,27 @@ describe Ipay do
         rand_id = rand(999999999999).to_s.center(10, rand(9).to_s).to_i
         vend_params = {term: "00200",
                   seq_num: 1,
+                  client: "StonehouseSA",
                   time: time.localtime("+02:00"),
-                  reference: rand_id,
+                  ref: rand_id,
                   amount: "1337",
                   currency: "ZAR",
                   num_tokens: "1",
                   meter: "A12C3456789",
                   pay_type: "creditCard"}
 
-      vend_request = IpayRequest.new(:vend_request, vend_params)
-
-      expect{subject.vend_request(vend_params)}.to raise_error(Net::TCPClient::ReadTimeout)
+      # vend_request = IpayRequest.new(:vend_request, vend_params)
+      subject.vend_request(vend_params)
+      expect{subject.vend_request_send}.to raise_error(Net::TCPClient::ReadTimeout)
       end
     end
     context 'unable to connect' do
         time = Time.new
         rand_id = rand(999999999999).to_s.center(10, rand(9).to_s).to_i
         params = {term: "00001",
+                  client: "StonehouseSA",
                   time: time.localtime("+02:00"),
-                  reference: rand_id,
+                  ref: rand_id,
                   amount: "1337",
                   seq_num: 1,
                   currency: "ZAR",

@@ -1,4 +1,4 @@
-require './ipay.rb'
+require '../ipay.rb'
 
 ipay = Ipay.new
 time = Time.new
@@ -17,7 +17,8 @@ vend_params = {client_id: "StonehouseSA",
 
 begin
   retries ||= 0
-  vend_response = ipay.vend_request(vend_params)
+  vend_xml = ipay.vend_request(vend_params)
+  vend_response = ipay.vend_request_send
   p "initial vend response: #{vend_response}"
 rescue Net::TCPClient::ReadTimeout => ex
   p "******RESCUING********"
@@ -37,6 +38,7 @@ rescue Net::TCPClient::ReadTimeout => ex
               num_tokens: vend_params[:num_tokens],
               meter: vend_params[:meter],
               pay_type: vend_params[:pay_type]}
+    vend_rev_response = ipay.vend_reverse_request(params)
     vend_rev_response = ipay.vend_reverse_request(params)
     p "vend_rev_response = #{vend_rev_response}"
   rescue Net::TCPClient::ReadTimeout => e
