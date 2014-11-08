@@ -42,6 +42,7 @@ class Ipay
 
   def vend_request(vend_params)
     response = nil
+    vr = nil
     begin
       vr = IpayRequest.new(:vend_request, vend_params)
       raw_response = socket_send(calc_vli(vr.result), vr.result)
@@ -51,7 +52,7 @@ class Ipay
       #rollback and return.
       raise
     end
-    return response
+    return vr, response
   end
 
   def vend_reverse_request(params)
