@@ -18,7 +18,7 @@ class Ipay
 
     # @host= "localhost"
     # @port = 2000
-    @timeout = 10
+    @timeout = 15
   end
 
   def socket_send(vli, message)
