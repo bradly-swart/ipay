@@ -12,12 +12,11 @@ class Ipay
   attr_accessor :port,:host, :timeout, :stream_sock
   attr_reader :vend_request_xml, :vend_reverse_request_xml
 
-  def initialize
+  def initialize(use_ssl=false, expected_cert_path='/etc/ssl/certs')
     @host = "41.204.194.188"
     @port = 8955
-
-    # @host= "localhost"
-    # @port = 2000
+    @use_ssl = use_ssl
+    @expected_cert_path = expected_cert_path
     @timeout = 10
   end
 
@@ -26,7 +25,9 @@ class Ipay
       server:                 "#{@host}:#{@port}",
       connect_retry_interval: 0.5,
       connect_retry_count:    3,
-      read_timeout:           @timeout
+      read_timeout:           @timeout,
+      use_ssl:                true,
+      expected_cert_path:     "/Users/brad/projects/powerplus/net_tcp_client/test/certificate.pem"
     ) do |client|
       # If the connection is lost, create a new one and retry the send
       client.retry_on_connection_failure do
