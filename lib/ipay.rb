@@ -26,19 +26,20 @@ class Ipay
       connect_retry_interval: 0.5,
       connect_retry_count:    3,
       read_timeout:           @timeout,
-      use_ssl:                true,
-      expected_cert_path:     "/Users/brad/projects/powerplus/net_tcp_client/test/certificate.pem"
+      use_ssl:                @use_ssl,
+      check_length:           true,
+      expected_cert_path:     @expected_cert_path
     ) do |client|
       # If the connection is lost, create a new one and retry the send
       client.retry_on_connection_failure do
-        puts "sending: #{vli.to_s}#{message}"
+        puts "sending: #{vli}#{message}"
         client.write("#{vli}#{message}")
       end
-      response_length = client.read(2)
-      len = response_length.unpack("n")
-      bytes_to_read = len[0]
-      response = client.read(bytes_to_read)
-      # puts "ipay response = #{response}"
+      # response_length = client.read(2)
+      # len = response_length.unpack("n")
+      # bytes_to_read = len[0]
+      response = client.read()
+      puts "ipay response = #{response}"
     end
   end
 

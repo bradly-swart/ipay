@@ -1,10 +1,10 @@
 require '../ipay.rb'
 
-ipay = Ipay.new
+ipay = Ipay.new(true, "/Users/brad/projects/powerplus/ipay/lib/util/bizswitch.pem")
 time = Time.new
 rand_id = rand(999999999999).to_s.center(10, rand(9).to_s).to_i
 vend_params = {client_id: "StonehouseSA",
-          term: "00200",
+          term: "00001",
           seq_num: 1,
           time: time.localtime("+02:00"),
           reference: rand_id,
@@ -26,7 +26,7 @@ rescue Net::TCPClient::ReadTimeout => ex
     time = Time.new
     rand_id = rand(999999999999).to_s.center(10, rand(9).to_s).to_i
     params = {client_id: "StonehouseSA",
-              term: '00200',
+              term: '00001',
               time: time,
               orig_time: vend_params[:time],
               rep_count: 0,
