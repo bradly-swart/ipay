@@ -97,7 +97,6 @@ describe Ipay do
         vend_rev_xml = subject.vend_reverse_request(params)
         vend_rev_response = subject.vend_reverse_request_send
 
-
         res_node = vend_rev_response.xpath("//ipayMsg/elecMsg/vendRevRes/res")
         expect(res_node.attribute('code').value).to eq("elec003")
       end
