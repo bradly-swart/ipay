@@ -2,7 +2,7 @@ require 'spec_helper'
 require_relative '../lib/ipay/IpayRequest'
 
 describe Ipay do
-  subject { Ipay.new }
+  subject { Ipay.new(true, "/Users/brad/projects/powerplus/ipay/lib/util/bizswitch.pem") }
 
   describe '#calc_vli' do
     time = Time.new
@@ -121,7 +121,7 @@ describe Ipay do
       expect{subject.vend_request_send}.to raise_error(Net::TCPClient::ReadTimeout)
       end
     end
-    context 'unable to connect' do
+    context 'Unable to connect' do
         time = Time.new
         rand_id = rand(999999999999).to_s.center(10, rand(9).to_s).to_i
         params = {term: "00001",
@@ -137,7 +137,6 @@ describe Ipay do
         let(:vend_request) {IpayRequest.new(:vend_request, params)}
         let(:message_length) {subject.calc_vli(vend_request.result)}
         let(:socket_response){ subject.socket_send(message_length, vend_request.result) }
-
       it "should raise connection timeout error" do
         subject.host = "127.1.1.1"
         expect{subject.socket_send(message_length, vend_request.result)}.to raise_error(Net::TCPClient::ConnectionTimeout)

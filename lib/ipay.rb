@@ -39,7 +39,6 @@ class Ipay
       # len = response_length.unpack("n")
       # bytes_to_read = len[0]
       response = client.read()
-      puts "ipay response = #{response}"
     end
   end
 
