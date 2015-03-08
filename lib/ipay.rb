@@ -12,12 +12,14 @@ class Ipay
   attr_accessor :port,:host, :timeout, :stream_sock
   attr_reader :vend_request_xml, :vend_reverse_request_xml
 
-  def initialize(use_ssl=false, expected_cert_path='/etc/ssl/certs')
-    @host = "41.204.194.188"
-    @port = 8955
-    @use_ssl = use_ssl
+  def initialize(use_ssl=false, cert_path='/etc/ssl/certs', cert_key_path='/etc/ssl/certs', expected_cert_path='/etc/ssl/certs')
+    @host               = "41.204.194.188"
+    @port               = 8955
+    @use_ssl            = use_ssl
+    @cert_path          = cert_path
+    @cert_key_path      = cert_key_path
     @expected_cert_path = expected_cert_path
-    @timeout = 10
+    @timeout            = 10
   end
 
   def socket_send(vli, message)
@@ -28,6 +30,8 @@ class Ipay
       read_timeout:           @timeout,
       use_ssl:                @use_ssl,
       check_length:           true,
+      cert_path:              @cert_path,
+      cert_key_path:          @cert_key_path,
       expected_cert_path:     @expected_cert_path
     ) do |client|
       # If the connection is lost, create a new one and retry the send
