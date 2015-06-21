@@ -14,12 +14,12 @@ class Ipay
 
   def initialize(use_ssl=false, cert_path='/etc/ssl/certs', cert_key_path='/etc/ssl/certs', expected_cert_path='/etc/ssl/certs')
     @host               = "41.204.194.188"
-    @port               = 8955
+    @port               = "8955"
     @use_ssl            = use_ssl
     @cert_path          = cert_path
     @cert_key_path      = cert_key_path
     @expected_cert_path = expected_cert_path
-    @timeout            = 10
+    @timeout            = 20
   end
 
   def socket_send(vli, message)
@@ -44,6 +44,31 @@ class Ipay
       # bytes_to_read = len[0]
       response = client.read()
     end
+  end
+
+  def customer_info_request(params)
+    request = nil
+    begin
+      request = IpayRequest.new(:customer_info_request, params)
+      @customer_info_xml = request.result
+    rescue => e
+      p "Error reading template: #{e.message}"
+      #rollback and return.
+    end
+    return @customer_info_xml
+  end
+
+  def customer_info_request_send
+    response = nil
+    begin
+      raw_response = socket_send(calc_vli(@customer_info_xml), @customer_info_xml)
+      response = Nokogiri::XML(raw_response)
+    rescue Net::TCPClient::ReadTimeout => ex
+      p "request timed out."
+      #rollback and return.
+      raise
+    end
+    return response
   end
 
   def vend_request(vend_params)

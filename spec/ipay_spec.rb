@@ -1,8 +1,29 @@
 require 'spec_helper'
 require_relative '../lib/ipay/IpayRequest'
+require 'pry'
 
 describe Ipay do
-  subject { Ipay.new(true, "/Users/brad/projects/powerplus/ipay/lib/util/bizswitch.pem") }
+  subject { Ipay.new(true, "/Users/brad/projects/powerplus/payment_plus/config/ssl/certs/certificate.pem",
+                           "/Users/brad/projects/powerplus/payment_plus/config/ssl/certs/private_key.pem",
+                           "/Users/brad/projects/powerplus/payment_plus/config/ssl/certs/bizswitch.pem") }
+
+  describe 'get customer info' do
+   time = Time.new
+   rand_id = rand(999999999999).to_s.center(10, rand(9).to_s).to_i
+   params = {term: "00001",
+             client: "StonehouseSA",
+             seq_num: 1,
+             time: time.localtime("+02:00"),
+             ref: rand_id,
+             meter: "A12C3456789"}
+
+    it "should receive meter info" do
+      request = subject.customer_info_request(params)
+      response = subject.customer_info_request_send
+      res_node = response.xpath("//elecMsg/custInfoRes/res")
+      expect(res_node.attribute('code').value).to eq("elec000")
+    end
+  end
 
   describe '#calc_vli' do
     time = Time.new

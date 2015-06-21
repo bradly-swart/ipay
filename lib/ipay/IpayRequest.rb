@@ -30,6 +30,13 @@ class IpayRequest < ERB
     return template_file
   end
 
+  def customer_info_request
+    template_file = File.read("#{@request_template_path}/customer_info.erb")
+    template_file.gsub!("\n", '')
+
+    return template_file
+  end
+
   def result
     super(binding)
   end
